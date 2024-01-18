@@ -64,13 +64,34 @@ void displayDrawScoreBoard(unsigned int scoreA,unsigned int scoreB)
   sprite.pushSprite(0, 0);
 }
 
+void drawWinner(char *winner)
+{
+  sprite.setFreeFont(FSSB18);
+  
+
+  if (strcmp(winner, "A") == 0)
+  {
+    sprite.setTextColor(TFT_BLACK, TFT_RED);
+    sprite.fillRect(0, 0, WIDTH, HEIGHT, TFT_RED);
+  }
+  else
+  {
+    sprite.setTextColor(TFT_BLACK, TFT_GREEN);
+    sprite.fillRect(0, 0, WIDTH, HEIGHT, TFT_GREEN);
+  }
+
+  sprite.drawString("Win", (WIDTH/24)*4, 50, GFXFF);
+
+  sprite.pushSprite(0, 0);
+}
+
 DisplayDriver tDisplayDriver = {
     displayInitialiaze,
     displayToggleOnOff,
     displayToggleRotation,
     displayDrawScoreBoard,
     clearScreen,
+    drawWinner,
     0,
-    0,
-    WIDTH,
-    HEIGHT};
+    0
+};

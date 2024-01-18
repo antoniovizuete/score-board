@@ -14,11 +14,14 @@ void setup()
   delay(100);
   Serial.println("Starting 'Goal tracker'...");
 
-  button1.setPressMs(5000);
+  button1.setPressMs(2000);
   button1.attachClick(increaseScoreA);
+  button1.attachDoubleClick(decreaseScoreA);
+  button1.attachDuringLongPress(resetScores);
 
-  button2.setPressMs(5000);
+  button2.setPressMs(2000);
   button2.attachClick(increaseScoreB);
+  button2.attachDoubleClick(decreaseScoreB);
 
   initDisplay();
 

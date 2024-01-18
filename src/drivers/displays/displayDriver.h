@@ -7,19 +7,18 @@ typedef void (*AlternateFunction)(void);
 typedef void (*DriverInitFunction)(void);
 typedef void (*ScreenFunction)(void);
 typedef void (*DrawScoreBoardFunction)(unsigned int scoreA, unsigned int scoreB);
-
+typedef void (*DrawWinnerFunction)(char *winner );
 
 typedef struct
 {
-  DriverInitFunction initDisplay;            
-  AlternateFunction alternateScreenState;    
-  AlternateFunction alternateScreenRotation; 
+  DriverInitFunction initDisplay;
+  AlternateFunction alternateScreenState;
+  AlternateFunction alternateScreenRotation;
   DrawScoreBoardFunction drawScoreBoard;
-  ScreenFunction clearScreen;      
-  int score_a;                               
-  int score_b;                               
-  int screenWidth;                           
-  int screenHeight;                          
+  ScreenFunction clearScreen;
+  DrawWinnerFunction drawWinner;
+  int score_a;
+  int score_b;
 } DisplayDriver;
 
 extern DisplayDriver *currentDisplayDriver;
