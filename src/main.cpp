@@ -1,10 +1,15 @@
 #include <Arduino.h>
 #include <OneButton.h>
+#include <WiFi.h>
+#include <esp_now.h>
 
 #include "drivers/displays/display.h"
+#include "drivers/communication/espnow.h"
 
 OneButton button1(PIN_BUTTON_1);
 OneButton button2(PIN_BUTTON_2);
+
+uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 void setup()
 {
@@ -13,6 +18,8 @@ void setup()
   Serial.setTimeout(0);
   delay(100);
   Serial.println("Starting 'Goal tracker'...");
+
+  initEspNow(broadcastAddress);
 
   button1.setPressMs(2000);
   button1.attachClick(increaseScoreA);
@@ -23,9 +30,9 @@ void setup()
   button2.attachClick(increaseScoreB);
   button2.attachDoubleClick(decreaseScoreB);
 
-  initDisplay();
+  initDisplay(broadcastAddress);
 
-  drawScoreBoard();
+  drawScoreBoard(false);
 }
 
 void loop() {

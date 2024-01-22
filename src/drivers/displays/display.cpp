@@ -1,13 +1,25 @@
 #include <Arduino.h>
 #include "display.h"
+#include "../communication/espnow.h"
 
 DisplayDriver *currentDisplayDriver = &tDisplayDriver;
 int maxScore = 5;
+uint8_t* currentBroadcastAddress;
+
+void drawScoreBoard(bool send)
+{
+  currentDisplayDriver->clearScreen();
+  currentDisplayDriver->drawScoreBoard(currentDisplayDriver->score_a, currentDisplayDriver->score_b);
+  if (send) {
+    sendData(currentDisplayDriver->score_a, currentDisplayDriver->score_b, currentBroadcastAddress);
+  }
+}
 
 // Initialize the display
-void initDisplay()
+void initDisplay(uint8_t broadcastAddress[])
 {
   currentDisplayDriver->initDisplay();
+  currentBroadcastAddress = broadcastAddress;
 }
 
 // Alternate screen state
@@ -32,13 +44,14 @@ void increaseScoreA()
   }
   if (currentDisplayDriver->score_a == maxScore)
   {
-    drawScoreBoard();
+    drawScoreBoard(true);
     delay(500);
     currentDisplayDriver->drawWinner("A");
     return;
   }
-  drawScoreBoard();
+  drawScoreBoard(true);
 }
+
 void increaseScoreB()
 {
   currentDisplayDriver->score_b++;
@@ -49,34 +62,49 @@ void increaseScoreB()
   }
   if (currentDisplayDriver->score_b == maxScore)
   {
-    drawScoreBoard();
+    drawScoreBoard(true);
     delay(500);
     currentDisplayDriver->drawWinner("B");
     return;
   }
-  drawScoreBoard();
+  drawScoreBoard(true);
 }
 void decreaseScoreA()
 {
   currentDisplayDriver->score_a = currentDisplayDriver->score_a == 0 ? 0 : currentDisplayDriver->score_a - 1;
-  drawScoreBoard();
+  drawScoreBoard(true);
 }
 void decreaseScoreB()
 {
   currentDisplayDriver->score_b = currentDisplayDriver->score_b == 0 ? 0 : currentDisplayDriver->score_b - 1;
-  drawScoreBoard();
+  drawScoreBoard(true);
 }
 
 void resetScores()
 {
   currentDisplayDriver->score_a = 0;
   currentDisplayDriver->score_b = 0;
-  drawScoreBoard();
-
+  drawScoreBoard(true);
 }
 
-void drawScoreBoard()
+void setScores(int scoreA, int scoreB)
 {
-  currentDisplayDriver->clearScreen();
-  currentDisplayDriver->drawScoreBoard(currentDisplayDriver->score_a, currentDisplayDriver->score_b);
+  bool send = false;
+  currentDisplayDriver->score_a = scoreA;
+  currentDisplayDriver->score_b = scoreB;
+  if (currentDisplayDriver->score_a == maxScore)
+  {
+    drawScoreBoard(send);
+    delay(500);
+    currentDisplayDriver->drawWinner("A");
+    return;
+  }
+  if (currentDisplayDriver->score_b == maxScore)
+  {
+    drawScoreBoard(send);
+    delay(500);
+    currentDisplayDriver->drawWinner("B");
+    return;
+  }
+  drawScoreBoard(send);
 }
